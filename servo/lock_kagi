@@ -3,19 +3,27 @@
 
 """This lock the door lock."""
 
+from sys import argv
 
 from model import servo_model
 from model import storage_model
+from model import sensor_model
 
 
 def main():
     """Lock door lock."""
     servo = servo_model.Servo()
-    servo.lock()
+    door = sensor_model.Door()
+    allow_open = "--allow-open" in argv
 
-    # update file
-    storage = storage_model.StorageModel()
-    storage.update_file("lock")
+    if door.isClose() or allow_open:
+        servo.lock()
+        # update filter
+        storage = storage_model.StorageModel()
+        storage.update_file("lock")
+    else:
+        print "door isn't close, use --allow-open option."
+
 
 
 if __name__ == '__main__':

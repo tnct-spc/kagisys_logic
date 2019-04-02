@@ -29,5 +29,6 @@ class Door():
     def isClose(self):
         """check door state."""
         # contral servo
+        time.sleep(1)
 	return GPIO.input(21)
 

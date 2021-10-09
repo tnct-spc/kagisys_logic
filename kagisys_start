@@ -8,20 +8,9 @@ import os
 
 def main():
     """Main."""
-    # run slack bot
-    th_slack = threading.Thread(target=start_slackbot, name="slackbot", args=())
-    th_slack.start()
-
     # run nfc lock
     th_nfc_lock = threading.Thread(target=start_nef_lock, name="nfc_lock", args=())
     th_nfc_lock.start()
-
-
-def start_slackbot():
-    """Start Slackbot."""
-    path = "/home/pi/project/kagisys_logic/slackbot/"
-    os.chdir(path)
-    os.system("sudo python2 slackbot.py")
 
 
 def start_nef_lock():

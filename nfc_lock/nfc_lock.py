@@ -9,7 +9,7 @@ import nfc
 import threading
 import os
 
-from db import DataBase
+from zemisys_helper import ZemisysHelper
 
 
 class NFC_Kagisys():
@@ -17,7 +17,7 @@ class NFC_Kagisys():
 	def __init__(self):
 		"""基本設定とスレッドの呼び出し"""
 		#基本的なセッティング
-		self.db = DataBase()
+		self.api_helper = ZemisysHelper()
 		signal.signal(signal.SIGINT, self.exit_handler)
 		th = threading.Thread(target=self.run, name="th", args=())
 		th.setDaemon(True)
@@ -34,7 +34,7 @@ class NFC_Kagisys():
 
 	def run(self):
 		"""メイン"""
-		self.clf = nfc.ContactlessFrontend('tty:AMA0:pn532')
+		self.clf = nfc.ContactlessFrontend('usb')
 
 		#繰り返し
 		while True:
@@ -45,19 +45,18 @@ class NFC_Kagisys():
 	def touched(self,tag):
 		"""タッチされたときの処理"""
 		#idの照合
-		tag_id = tag.identifier.encode("hex").upper()
+		tag_id = tag.identifier.encode("hex").lower()
 		print(tag_id)
-		self.db.addTouchedLog(tag_id)
-		if not self.db.checkIDm(tag_id):
-			#データが正しいidと異なっていた場合
-			self.write_not_auth_id(tag_id)
-
-			print("No matching Key")
-			print("setting OK.")
-			return
 
 		# toggleの受け取り
 		toggle = self.get_toggle()
+		is_open = !(toggle == "open")  # 状態を変更したいので現在の状態の逆を取る
+
+		if not self.api_helper.auth(tag_id, is_open):
+			#データが正しいidと異なっていた場合
+			print("No matching Key")
+			print("setting OK.")
+			return
 
 		if toggle == "lock":
 			#鍵の解錠
@@ -66,7 +65,7 @@ class NFC_Kagisys():
 			#鍵の施錠
 			os.system("lock_kagi")
 		else:
-			print "error ! please check file path"
+			print("error ! please check file path")
 
 	def get_toggle(self):
 		"""toggleデータの取得"""
@@ -75,16 +74,6 @@ class NFC_Kagisys():
 		result = file_.read()
 		file_.close()
 		return result
-
-
-	def write_not_auth_id(self,id):
-		"""write not to auth id"""
-		write_string = "not authed : " + id
-
-		os.chdir("/home/pi/project/kagisys_logic/")
-                file_ = open('not_auth.log', 'a')		
-		file_.write(write_string)
-		file_.close() 
 
 
 if __name__ == '__main__':

@@ -50,7 +50,7 @@ class NFC_Kagisys():
 
 		# toggleの受け取り
 		toggle = self.get_toggle()
-		is_open = !(toggle == "open")  # 状態を変更したいので現在の状態の逆を取る
+		is_open = not toggle == "open"  # 状態を変更したいので現在の状態の逆を取る
 
 		if not self.api_helper.auth(tag_id, is_open):
 			#データが正しいidと異なっていた場合

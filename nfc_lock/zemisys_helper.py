@@ -11,7 +11,7 @@ class ZemisysHelper():
     def __init__(self):
         """APIのURLをkagisys.confから取ってくる"""
         self.config = configparser.SafeConfigParser()
-		self.config.read('/home/pi/project/kagisys.conf')
+	self.config.read('/home/pi/project/kagisys.conf')
         api_url = self.config.get('Zemisys', 'url')
         self.url = api_url
 

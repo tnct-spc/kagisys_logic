@@ -15,7 +15,7 @@ class ZemisysHelper():
         api_url = self.config.get('Zemisys', 'url')
         self.url = api_url
 
-    def auth(idm, is_open):
+    def auth(self, idm, is_open):
         # ZemisysのDBに小文字で保存しているので一応処理する
         idm = idm.lower()
 

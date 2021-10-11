@@ -30,4 +30,4 @@ class ZemisysHelper():
         res_json = response.json()
 
         # is_authがfalseだったら認証失敗
-        return res_json.is_auth is not None
+        return res_json["is_auth"] is not None

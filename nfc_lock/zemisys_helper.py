@@ -29,5 +29,8 @@ class ZemisysHelper():
         response = requests.post(url=self.url, data=auth_data, headers=headers)
         res_json = response.json()
 
+        if res_json["is_auth"] is None:
+            return False
+
         # is_authがfalseだったら認証失敗
-        return res_json["is_auth"] is not None
+        return res_json["is_auth"]
